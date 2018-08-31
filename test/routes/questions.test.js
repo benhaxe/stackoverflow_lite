@@ -6,11 +6,11 @@ import request from 'supertest';
 import { app } from '../../app';
 
 import {
-  UserModel, QuestionModel, AnswerModel,
+  UserModel, QuestionModel, AnswerModel, CommentModel,
 } from '../../app/models';
 
 
-describe('PUT /questions/:questionId/answers/answerId', () => {
+describe('POST /questions/:questionId/answers/:answerId/comments', () => {
   let session;
   let questionId;
   let answerId;
@@ -42,7 +42,9 @@ describe('PUT /questions/:questionId/answers/answerId', () => {
         if (err) {
           return done(err);
         }
-        ({ session } = res.body);
+        ({
+          session,
+        } = res.body);
         return done();
       });
   });
@@ -61,7 +63,9 @@ describe('PUT /questions/:questionId/answers/answerId', () => {
         if (err) {
           return done(err);
         }
-        ({ id: questionId } = res.body);
+        ({
+          id: questionId,
+        } = res.body);
         return done();
       });
   });
@@ -81,7 +85,9 @@ describe('PUT /questions/:questionId/answers/answerId', () => {
         if (err) {
           return done(err);
         }
-        ({ id: answerId } = res.body);
+        ({
+          id: answerId,
+        } = res.body);
         return done();
       });
   });
@@ -115,47 +121,36 @@ describe('PUT /questions/:questionId/answers/answerId', () => {
       });
   });
 
-  it('should reply with 200 status code', (done) => {
+  after((done) => {
+    CommentModel.delete()
+      .then(() => {
+        done();
+      })
+      .catch((e) => {
+        done(e);
+      });
+  });
+
+  it('should reply with 200 status code for comment posted', (done) => {
     request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
+      .post(`/questions/${questionId}/answers/${answerId}/comments`)
       .set({
         Authorization: `Bearer ${session}`,
       })
       .type('form')
-      .send({ author: true })
+      .send({
+        comment: 'You are a liar fam',
+      })
       .expect(200, done);
   });
   it('should reply with 401 status code when authorization header is not set', (done) => {
     request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
+      .post(`/questions/${questionId}/answers/${answerId}/comments`)
       .set({})
       .type('form')
-      .send({ author: true })
+      .send({
+        author: true,
+      })
       .expect(401, done);
-  });
-  it('should reply with 200 for upvote', (done) => {
-    request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
-      .set({ Authorization: `Bearer ${session}` })
-      .type('form')
-      .send({ upvote: 0 })
-      .expect(200, done);
-  });
-
-  it('should reply with 200 for downvote', (done) => {
-    request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
-      .set({ Authorization: `Bearer ${session}` })
-      .type('form')
-      .send({ downvote: 0 })
-      .expect(200, done);
-  });
-  it('should reply with 200 for update to answer', (done) => {
-    request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
-      .set({ Authorization: `Bearer ${session}` })
-      .type('form')
-      .send()
-      .expect(200, done);
   });
 });

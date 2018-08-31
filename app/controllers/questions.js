@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { QuestionModel, AnswerModel } from '../models/index';
+import { QuestionModel, AnswerModel, CommentModel } from '../models/index';
 
 const router = Router();
 module.exports = (app) => {
@@ -54,57 +54,33 @@ router.post('/', async (req, res, next) => {
   return res.json(result);
 });
 
-/*
-  This route perform many function
-  1. It is use by the author of a question to accept an answer
-  2. It is use by the  author of the answer to modify the answer posted earlier
-  3. It is used by anybody to upvote and downvote an answer
- */
-router.put('/:questionId/answers/:answerId', async (req, res, next) => {
-  const { questionId, answerId } = req.params;
-  const {
-    answer, author, upvote, downvote,
-  } = req.body;
-  if (!questionId || !answerId) {
-    return res.status(400).send('Question or user id cannot be null');
-  }
 
+/*
+this route is used for commenting on an answer by users
+ */
+router.post('/:questionId/answers/:answerId/comments', async (req, res, next) => {
+  const {
+    comment,
+  } = req.body;
+  const {
+    answerId: answerid,
+  } = req.params;
+  const {
+    id: userid,
+  } = req.user;
+  let result;
+  if (!comment) {
+    return res.status(400).send('Comments cannot be empty');
+  }
   try {
-    // Downvote Logic
-    if (downvote) {
-      await AnswerModel.update({
-        id: answerId,
-      }, {
-        downvote: downvote + 1,
-      });
-      return res.status(200).send('downvoted');
-    }
-    // Upvote Logic
-    if (upvote) {
-      await AnswerModel.update({
-        id: answerId,
-      }, {
-        upvote: upvote + 1,
-      });
-      return res.status(200).send('upvoted');
-    }
-    // Acceptance Logic
-    if (author) {
-      await AnswerModel.update({
-        id: answerId,
-      }, {
-        accepted: true,
-      });
-      return res.status(200).send('accepted');
-    }
-    // Update logic
-    await AnswerModel.update({
-      id: answerId,
-    }, {
-      answer,
+    result = await CommentModel.create({
+      comment,
+      userid,
+      answerid,
     });
-    return res.status(200).send('updated');
   } catch (err) {
     return next(err);
   }
+
+  return res.json(result);
 });
