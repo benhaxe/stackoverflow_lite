@@ -1,0 +1,1 @@
+https://travis-ci.org/benhaxe/stackoverflow_lite.svg?branch=develop
