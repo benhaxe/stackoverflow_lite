@@ -5,10 +5,10 @@
   "main": "app.js",
   "scripts": {
     "start": "babel-node app.js",
-    "dev":"nodemon --exec babel-node app.js",
-    "build": "babel ../src -d",
-    "test": "npx mocha --timeout 10000 --exit --compilers js:babel-register --recursive --require babel-polyfill",
-    "coverage": "npx nyc mocha --timeout 10000 --exit --compilers js:babel-register --recursive --require babel-polyfill "
+    "dev": "nodemon --exec babel-node app.js",
+    "build": "babel ../src -d ../dist",
+    "test": "nyc mocha --timeout 10000 --exit --compilers js:babel-register --recursive --require babel-polyfill",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
     "bcrypt": "^2.0.1",
@@ -43,6 +43,7 @@
     "babel-register": "^6.26.0",
     "chai": "^3.5.0",
     "chai-http": "^4.0.0",
+    "coveralls": "^3.0.2",
     "debug": "^2.2.0",
     "gulp": "^3.9.0",
     "gulp-livereload": "^3.8.0",
