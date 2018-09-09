@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import passport from 'passport';
 
 const {
-  SECRET
+  SECRET,
 } = process.env;
 const router = express.Router();
 
@@ -21,15 +21,15 @@ router.post('/signup', (req, res, next) => {
     if (user) {
       const payload = {
         email: user.email,
-        id: user.id
+        id: user.id,
       };
       const token = jwt.sign(payload, SECRET);
       return res.json({
-        session: token
+        session: token,
       }); // return token to the client
     }
     return res.status(400).send({
-      error: info.message
+      error: info.message,
     });
   })(req, res, next);
 });
@@ -45,15 +45,15 @@ router.post('/login', (req, res, next) => {
     if (user) {
       const payload = {
         email: user.email,
-        id: user.id
+        id: user.id,
       };
       const token = jwt.sign(payload, SECRET);
       return res.json({
-        session: token
+        session: token,
       });
     }
     return res.status(400).send({
-      error: info.message
+      error: info.message,
     });
   })(req, res, next);
 });
