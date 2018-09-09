@@ -1,11 +1,15 @@
-import { Router } from 'express';
+import {
+  Router,
+} from 'express';
 import passport from 'passport';
-import { QuestionModel } from '../models/index';
+import {
+  QuestionModel,
+} from '../models/index';
 
 const router = Router();
 module.exports = (app) => {
-  app.use('/questions',
-  // Protect our route with jwt
+  app.use('/questions/v1',
+    // Protect our route with jwt
     passport.authenticate('jwt', {
       session: false,
     }),
@@ -45,7 +49,9 @@ router.post('/', async (req, res, next) => {
 */
 router.get('/:questionId', async (req, res, next) => {
   let result;
-  const { questionId } = req.params;
+  const {
+    questionId,
+  } = req.params;
   if (!questionId) {
     return res.status(400).send('Question id cannot be null');
   }
