@@ -1,24 +1,29 @@
 import {
-  after, beforeEach, describe, before, it,
+  after,
+  beforeEach,
+  describe,
+  before,
+  it,
 } from 'mocha';
 import request from 'supertest';
 import chai from 'chai';
 
-import { app } from '../../app';
+import {
+  app,
+} from '../../app';
 
 import {
-  UserModel, QuestionModel, AnswerModel, CommentModel,
+  UserModel,
+  QuestionModel,
 } from '../../app/models';
 
-const { expect } = chai;
 
-
-describe('POST /questions/:questionId/answers', () => {
+describe('POST /questions/v1/:questionId/answers', () => {
   let session;
   let id;
   before((done) => {
     request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -31,7 +36,7 @@ describe('POST /questions/:questionId/answers', () => {
   });
   before((done) => {
     request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -44,13 +49,15 @@ describe('POST /questions/:questionId/answers', () => {
         if (err) {
           return done(err);
         }
-        ({ session } = res.body);
+        ({
+          session,
+        } = res.body);
         return done();
       });
   });
   before((done) => {
     request(app)
-      .post('/questions')
+      .post('/questions/v1')
       .type('form')
       .set({
         Authorization: `Bearer ${session}`,
@@ -63,7 +70,9 @@ describe('POST /questions/:questionId/answers', () => {
         if (err) {
           return done(err);
         }
-        ({ id } = res.body);
+        ({
+          id,
+        } = res.body);
         return done();
       });
   });
@@ -89,18 +98,20 @@ describe('POST /questions/:questionId/answers', () => {
 
   it('should reply with 200 status code', (done) => {
     request(app)
-      .post(`/questions/${id}/answers`)
+      .post(`/questions/v1/${id}/answers`)
       .set({
         Authorization: `Bearer ${session}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       })
       .type('form')
-      .send({ answer: 'yes' })
+      .send({
+        answer: 'yes',
+      })
       .expect(200, done);
   });
   it('should reply with 401 status code when authorization header is not set', (done) => {
     request(app)
-      .post(`/questions/${id}/answers`)
+      .post(`/questions/v1/${id}/answers`)
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
       })
@@ -113,7 +124,7 @@ describe('POST /questions/:questionId/answers', () => {
 
   it('should reply with 401 status code when answer is not provided', (done) => {
     request(app)
-      .post(`/questions/${id}/answers`)
+      .post(`/questions/v1/${id}/answers`)
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
       })
