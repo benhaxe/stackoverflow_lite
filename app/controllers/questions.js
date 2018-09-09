@@ -1,11 +1,15 @@
-import { Router } from 'express';
+import {
+  Router
+} from 'express';
 import passport from 'passport';
-import { QuestionModel } from '../models/index';
+import {
+  QuestionModel
+} from '../models/index';
 
 const router = Router();
 module.exports = (app) => {
-  app.use('/questions',
-  // Protect our route with jwt
+  app.use('/questions/v1',
+    // Protect our route with jwt
     passport.authenticate('jwt', {
       session: false,
     }),
