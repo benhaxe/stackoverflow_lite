@@ -1,22 +1,30 @@
 import {
-  after, describe, before, it,
+  after,
+  describe,
+  before,
+  it,
 } from 'mocha';
 import request from 'supertest';
 import chai from 'chai';
 
-import { app } from '../../app';
+import {
+  app,
+} from '../../app';
 
 import {
-  UserModel, QuestionModel,
+  UserModel,
+  QuestionModel,
 } from '../../app/models';
 
-const { expect } = chai;
+const {
+  expect,
+} = chai;
 
-describe('GET /questions', () => {
+describe('GET /questions/v1', () => {
   let session;
   before((done) => {
     request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -29,9 +37,11 @@ describe('GET /questions', () => {
   });
   before((done) => {
     request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
-      .set({ 'Content-Type': 'application/x-www-form-urlencoded' })
+      .set({
+        'Content-Type': 'application/x-www-form-urlencoded',
+      })
       .send({
         email: 'easyclick05@gmail.com',
         password: '12345678',
@@ -40,7 +50,9 @@ describe('GET /questions', () => {
         if (err) {
           return done(err);
         }
-        ({ session } = res.body);
+        ({
+          session,
+        } = res.body);
         return done();
       });
   });
@@ -61,25 +73,29 @@ describe('GET /questions', () => {
 
   it('should reply with 200 status code', (done) => {
     request(app)
-      .get('/questions')
-      .set({ Authorization: `Bearer ${session}` })
+      .get('/questions/v1')
+      .set({
+        Authorization: `Bearer ${session}`,
+      })
       .expect(200, done);
   });
   it('should reply with 401 status code when authorization header is not set', (done) => {
     request(app)
-      .get('/questions')
+      .get('/questions/v1')
       .expect(401, done);
   });
 
   it('should reply with 401 status code when passed invalid session value', (done) => {
     request(app)
-      .get('/questions')
-      .set({ Authorization: 'Bearer sjjsggdg' })
+      .get('/questions/v1')
+      .set({
+        Authorization: 'Bearer sjjsggdg',
+      })
       .expect(401, done);
   });
-  it('should return empty questions array', (done) => {
+  it('should return empty questions/v1 array', (done) => {
     request(app)
-      .get('/questions')
+      .get('/questions/v1')
       .set('Authorization', `Bearer ${session}`)
       .end((err, res) => {
         if (err) {
@@ -92,11 +108,11 @@ describe('GET /questions', () => {
       });
   });
 });
-describe('GET /questions', () => {
+describe('GET /questions/v1', () => {
   let session;
   before((done) => {
     request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -109,7 +125,7 @@ describe('GET /questions', () => {
   });
   before((done) => {
     request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
       })
@@ -122,16 +138,22 @@ describe('GET /questions', () => {
         if (err) {
           return done(err);
         }
-        ({ session } = res.body);
+        ({
+          session,
+        } = res.body);
         return done();
       });
   });
   before((done) => {
     request(app)
-      .post('/questions')
-      .set({ Authorization: `Bearer ${session}` })
+      .post('/questions/v1')
+      .set({
+        Authorization: `Bearer ${session}`,
+      })
       .type('form')
-      .send({ question: 'How are you?' })
+      .send({
+        question: 'How are you?',
+      })
       .expect(200, done);
   });
   after((done) => {
@@ -156,7 +178,7 @@ describe('GET /questions', () => {
 
   it('should return array of quetions', (done) => {
     request(app)
-      .get('/questions')
+      .get('/questions/v1')
       .set('Authorization', `Bearer ${session}`)
       .end((err, res) => {
         if (err) {

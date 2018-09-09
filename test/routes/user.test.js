@@ -1,12 +1,23 @@
 import {
-  after, beforeEach, describe, before, it,
+  after,
+  beforeEach,
+  describe,
+  before,
+  it,
 } from 'mocha';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import { app, server } from '../../app';
-import { UserModel } from '../../app/models';
+import {
+  app,
+  server,
+} from '../../app';
+import {
+  UserModel,
+} from '../../app/models';
 
-const { expect } = chai;
+const {
+  expect,
+} = chai;
 chai.use(chaiHttp);
 
 after(() => {
@@ -17,7 +28,7 @@ beforeEach((done) => {
   setTimeout(() => done(), 500);
 });
 
-describe('/auth/signup', () => {
+describe('/auth/v1/signup', () => {
   before((done) => {
     UserModel.delete()
       .then(() => {
@@ -31,9 +42,12 @@ describe('/auth/signup', () => {
   it('should reply with 200 status code', (done) => {
     chai
       .request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
-      .send({ email: 'easyclick05@gmail.com', password: 'abcdefgh' })
+      .send({
+        email: 'easyclick05@gmail.com',
+        password: 'abcdefgh',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -47,9 +61,12 @@ describe('/auth/signup', () => {
   it('should reply with 400 status code', (done) => {
     chai
       .request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
-      .send({ email: 'easyclick05@gmail.com', password: 'abcdefgh' })
+      .send({
+        email: 'easyclick05@gmail.com',
+        password: 'abcdefgh',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -63,7 +80,7 @@ describe('/auth/signup', () => {
   });
 });
 
-describe('/auth/signup with invalid data', () => {
+describe('/auth/v1/signup with invalid data', () => {
   beforeEach((done) => {
     UserModel.delete()
       .then(() => {
@@ -77,9 +94,12 @@ describe('/auth/signup with invalid data', () => {
   it('should reply with invalid email error message', (done) => {
     chai
       .request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
-      .send({ email: 'easyclick@gmail', password: '62337087' })
+      .send({
+        email: 'easyclick@gmail',
+        password: '62337087',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -94,7 +114,7 @@ describe('/auth/signup with invalid data', () => {
   it('should reply with 400 status code', (done) => {
     chai
       .request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
       .end((err, res) => {
         if (err) {
@@ -107,7 +127,7 @@ describe('/auth/signup with invalid data', () => {
   it('should reply with Missing credentials error message', (done) => {
     chai
       .request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
       .end((err, res) => {
         if (err) {
@@ -121,13 +141,16 @@ describe('/auth/signup with invalid data', () => {
   });
 });
 
-describe('/auth/login', () => {
+describe('/auth/v1/login', () => {
   before((done) => {
     chai
       .request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
-      .send({ email: 'easyclick05@gmail.com', password: 'abcdefgh' })
+      .send({
+        email: 'easyclick05@gmail.com',
+        password: 'abcdefgh',
+      })
       .then(() => done())
       .catch((err) => {
         done(err);
@@ -146,9 +169,12 @@ describe('/auth/login', () => {
   it('should reply with 200 status code', (done) => {
     chai
       .request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
-      .send({ email: 'easyclick05@gmail.com', password: 'abcdefgh' })
+      .send({
+        email: 'easyclick05@gmail.com',
+        password: 'abcdefgh',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -161,9 +187,12 @@ describe('/auth/login', () => {
   it('should have a response body with property session', (done) => {
     chai
       .request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
-      .send({ email: 'easyclick05@gmail.com', password: 'abcdefgh' })
+      .send({
+        email: 'easyclick05@gmail.com',
+        password: 'abcdefgh',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -177,9 +206,12 @@ describe('/auth/login', () => {
   it('should have a response status code of 200', (done) => {
     chai
       .request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
-      .send({ email: 'easyclick05@gmail.com', password: 'abcdefgh' })
+      .send({
+        email: 'easyclick05@gmail.com',
+        password: 'abcdefgh',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -191,9 +223,12 @@ describe('/auth/login', () => {
   it('should have a response status code of 400', (done) => {
     chai
       .request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
-      .send({ email: 'easyclick0@gmail.com', password: 'abcdefgh' })
+      .send({
+        email: 'easyclick0@gmail.com',
+        password: 'abcdefgh',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -205,9 +240,12 @@ describe('/auth/login', () => {
   it('should have an error response "User does not exist"', (done) => {
     chai
       .request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
-      .send({ email: 'easyclick0@gmail.com', password: 'abcdefgh' })
+      .send({
+        email: 'easyclick0@gmail.com',
+        password: 'abcdefgh',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -221,9 +259,12 @@ describe('/auth/login', () => {
   it('should have an error response "Invalid password"', (done) => {
     chai
       .request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
-      .send({ email: 'easyclick05@gmail.com', password: 'abcde' })
+      .send({
+        email: 'easyclick05@gmail.com',
+        password: 'abcde',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -237,9 +278,11 @@ describe('/auth/login', () => {
   it('should have an error response "Missing credentials"', (done) => {
     chai
       .request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
-      .send({ email: 'easyclick05@gmail.com' })
+      .send({
+        email: 'easyclick05@gmail.com',
+      })
       .end((err, res) => {
         if (err) {
           return done(err);
