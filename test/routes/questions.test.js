@@ -1,22 +1,29 @@
 import {
-  after, describe, before, it,
+  after,
+  describe,
+  before,
+  it,
 } from 'mocha';
 import request from 'supertest';
 
-import { app } from '../../app';
+import {
+  app,
+} from '../../app';
 
 import {
-  UserModel, QuestionModel, AnswerModel,
+  UserModel,
+  QuestionModel,
+  AnswerModel,
 } from '../../app/models';
 
 
-describe('PUT /questions/:questionId/answers/answerId', () => {
+describe('PUT /questions/v1/:questionId/answers/answerId', () => {
   let session;
   let questionId;
   let answerId;
   before((done) => {
     request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -29,7 +36,7 @@ describe('PUT /questions/:questionId/answers/answerId', () => {
   });
   before((done) => {
     request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,13 +49,15 @@ describe('PUT /questions/:questionId/answers/answerId', () => {
         if (err) {
           return done(err);
         }
-        ({ session } = res.body);
+        ({
+          session,
+        } = res.body);
         return done();
       });
   });
   before((done) => {
     request(app)
-      .post('/questions')
+      .post('/questions/v1')
       .type('form')
       .set({
         Authorization: `Bearer ${session}`,
@@ -61,14 +70,16 @@ describe('PUT /questions/:questionId/answers/answerId', () => {
         if (err) {
           return done(err);
         }
-        ({ id: questionId } = res.body);
+        ({
+          id: questionId,
+        } = res.body);
         return done();
       });
   });
 
   before((done) => {
     request(app)
-      .post(`/questions/${questionId}/answers`)
+      .post(`/questions/v1/${questionId}/answers`)
       .type('form')
       .set({
         Authorization: `Bearer ${session}`,
@@ -81,7 +92,9 @@ describe('PUT /questions/:questionId/answers/answerId', () => {
         if (err) {
           return done(err);
         }
-        ({ id: answerId } = res.body);
+        ({
+          id: answerId,
+        } = res.body);
         return done();
       });
   });
@@ -117,43 +130,57 @@ describe('PUT /questions/:questionId/answers/answerId', () => {
 
   it('should reply with 200 status code', (done) => {
     request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
+      .put(`/questions/v1/${questionId}/answers/${answerId}`)
       .set({
         Authorization: `Bearer ${session}`,
       })
       .type('form')
-      .send({ author: true })
+      .send({
+        author: true,
+      })
       .expect(200, done);
   });
   it('should reply with 401 status code when authorization header is not set', (done) => {
     request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
+      .put(`/questions/v1/${questionId}/answers/${answerId}`)
       .set({})
       .type('form')
-      .send({ author: true })
+      .send({
+        author: true,
+      })
       .expect(401, done);
   });
   it('should reply with 200 for upvote', (done) => {
     request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
-      .set({ Authorization: `Bearer ${session}` })
+      .put(`/questions/v1/${questionId}/answers/${answerId}`)
+      .set({
+        Authorization: `Bearer ${session}`,
+      })
       .type('form')
-      .send({ upvote: 0 })
+      .send({
+        upvote: 0,
+      })
       .expect(200, done);
   });
 
   it('should reply with 200 for downvote', (done) => {
     request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
-      .set({ Authorization: `Bearer ${session}` })
+      .put(`/questions/v1/${questionId}/answers/${answerId}`)
+      .set({
+        Authorization: `Bearer ${session}`,
+      })
       .type('form')
-      .send({ downvote: 0 })
+      .send({
+        downvote: 0,
+      })
       .expect(200, done);
   });
   it('should reply with 200 for update to answer', (done) => {
     request(app)
-      .put(`/questions/${questionId}/answers/${answerId}`)
-      .set({ Authorization: `Bearer ${session}` })
+      .put(`/questions/v1/${questionId}/answers/${answerId}`)
+      .set({
+        Authorization: `Bearer ${session}`,
+      })
       .type('form')
       .send()
       .expect(200, done);
