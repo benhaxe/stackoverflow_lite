@@ -1,11 +1,17 @@
-import { Router } from 'express';
+import {
+  Router
+} from 'express';
 import passport from 'passport';
-import { QuestionModel, AnswerModel, CommentModel } from '../models/index';
+import {
+  QuestionModel,
+  AnswerModel,
+  CommentModel
+} from '../models/index';
 
 const router = Router();
 module.exports = (app) => {
-  app.use('/questions',
-  // Protect our route with jwt
+  app.use('/questions/v1/',
+    // Protect our route with jwt
     passport.authenticate('jwt', {
       session: false,
     }),
@@ -17,7 +23,9 @@ module.exports = (app) => {
 */
 router.get('/:questionId', async (req, res, next) => {
   let result;
-  const { questionId } = req.params;
+  const {
+    questionId
+  } = req.params;
   if (!questionId) {
     return res.status(400).send('Question id cannot be null');
   }
@@ -35,15 +43,25 @@ router.get('/:questionId', async (req, res, next) => {
 */
 router.post('/:questionId/answers', async (req, res, next) => {
   let result;
-  const { questionId } = req.params;
-  const { answer } = req.body;
-  const { id: userid } = req.user;
+  const {
+    questionId
+  } = req.params;
+  const {
+    answer
+  } = req.body;
+  const {
+    id: userid
+  } = req.user;
   if (!questionId || !answer) {
     return res.status(400).send('Answer cannot be null');
   }
 
   try {
-    result = await AnswerModel.create({ answer, userid, questionId });
+    result = await AnswerModel.create({
+      answer,
+      userid,
+      questionId
+    });
   } catch (err) {
     return next(err);
   }
@@ -56,7 +74,9 @@ router.post('/:questionId/answers', async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   let questions;
   try {
-    questions = await QuestionModel.find({ where: {} });
+    questions = await QuestionModel.find({
+      where: {}
+    });
   } catch (err) {
     next(err);
   }
@@ -68,15 +88,22 @@ router.get('/', async (req, res, next) => {
  */
 router.post('/', async (req, res, next) => {
   let result;
-  const { question } = req.body;
-  const { id: userid } = req.user;
+  const {
+    question
+  } = req.body;
+  const {
+    id: userid
+  } = req.user;
   if (!question) {
     return res.status(400).send('Question cannot be null');
   }
 
 
   try {
-    result = await QuestionModel.create({ question, userid });
+    result = await QuestionModel.create({
+      question,
+      userid
+    });
   } catch (err) {
     return next(err);
   }
@@ -88,13 +115,19 @@ router.post('/', async (req, res, next) => {
     route for deleting a question from the database
 */
 router.delete('/:questionId', async (req, res, next) => {
-  const { questionId } = req.params;
+  const {
+    questionId
+  } = req.params;
   if (!questionId) {
     return res.status(400).send('Question id cannot be null');
   }
 
   try {
-    await QuestionModel.deleteOne({ where: { id: questionId } });
+    await QuestionModel.deleteOne({
+      where: {
+        id: questionId
+      }
+    });
   } catch (err) {
     return next(err);
   }
@@ -108,9 +141,15 @@ router.delete('/:questionId', async (req, res, next) => {
   3. It is used by anybody to upvote and downvote an answer
  */
 router.put('/:questionId/answers/:answerId', async (req, res, next) => {
-  const { questionId, answerId } = req.params;
   const {
-    answer, author, upvote, downvote,
+    questionId,
+    answerId
+  } = req.params;
+  const {
+    answer,
+    author,
+    upvote,
+    downvote,
   } = req.body;
   if (!questionId || !answerId) {
     return res.status(400).send('Question or user id cannot be null');
@@ -159,15 +198,25 @@ router.put('/:questionId/answers/:answerId', async (req, res, next) => {
 this route is used for commenting on an answer by users
  */
 router.post('/:questionId/answers/:answerId/comments', async (req, res, next) => {
-  const { comment } = req.body;
-  const { answerId: answerid } = req.params;
-  const { id: userid } = req.user;
+  const {
+    comment
+  } = req.body;
+  const {
+    answerId: answerid
+  } = req.params;
+  const {
+    id: userid
+  } = req.user;
   let result;
   if (!comment) {
     return res.status(400).send('Comments cannot be empty');
   }
   try {
-    result = await CommentModel.create({ comment, userid, answerid });
+    result = await CommentModel.create({
+      comment,
+      userid,
+      answerid
+    });
   } catch (err) {
     return next(err);
   }
