@@ -1,22 +1,27 @@
 import {
-  after, describe, before, it,
+  after,
+  describe,
+  before,
+  it,
 } from 'mocha';
 import request from 'supertest';
 import chai from 'chai';
 
-import { app } from '../../app';
+import {
+  app,
+} from '../../app';
 
 import {
-  UserModel, QuestionModel,
+  UserModel,
+  QuestionModel,
 } from '../../app/models';
 
-const { expect } = chai;
 
-describe('POST /questions', () => {
+describe('POST /questions/v1', () => {
   let session;
   before((done) => {
     request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -29,7 +34,7 @@ describe('POST /questions', () => {
   });
   before((done) => {
     request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,7 +47,9 @@ describe('POST /questions', () => {
         if (err) {
           return done(err);
         }
-        ({ session } = res.body);
+        ({
+          session,
+        } = res.body);
         return done();
       });
   });
@@ -68,18 +75,20 @@ describe('POST /questions', () => {
 
   it('should reply with 200 status code', (done) => {
     request(app)
-      .post('/questions')
+      .post('/questions/v1')
       .set({
         Authorization: `Bearer ${session}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       })
       .type('form')
-      .send({ question: 'how are you' })
+      .send({
+        question: 'how are you',
+      })
       .expect(200, done);
   });
   it('should reply with 401 status code', (done) => {
     request(app)
-      .post('/questions')
+      .post('/questions/v1')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
       })
@@ -91,7 +100,7 @@ describe('POST /questions', () => {
   });
   it('should reply with 400 status code when no question is passed to it', (done) => {
     request(app)
-      .post('/questions')
+      .post('/questions/v1')
       .set({
         Authorization: `Bearer ${session}`,
         'Content-Type': 'application/x-www-form-urlencoded',
