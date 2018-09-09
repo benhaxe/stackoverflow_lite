@@ -1,20 +1,27 @@
 import {
-  after, beforeEach, describe, before, it,
+  after,
+  beforeEach,
+  describe,
+  before,
+  it,
 } from 'mocha';
 import request from 'supertest';
-import { app } from '../../app';
+import {
+  app,
+} from '../../app';
 
 import {
-  UserModel, QuestionModel,
+  UserModel,
+  QuestionModel,
 } from '../../app/models';
 
 
-describe('DELETE /questions/:questionId', () => {
+describe('DELETE /questions/v1/:questionId', () => {
   let session;
   let id;
   before((done) => {
     request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -27,7 +34,7 @@ describe('DELETE /questions/:questionId', () => {
   });
   before((done) => {
     request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -40,13 +47,15 @@ describe('DELETE /questions/:questionId', () => {
         if (err) {
           return done(err);
         }
-        ({ session } = res.body);
+        ({
+          session,
+        } = res.body);
         return done();
       });
   });
   beforeEach((done) => {
     request(app)
-      .post('/questions')
+      .post('/questions/v1')
       .type('form')
       .set({
         Authorization: `Bearer ${session}`,
@@ -59,7 +68,9 @@ describe('DELETE /questions/:questionId', () => {
         if (err) {
           return done(err);
         }
-        ({ id } = res.body);
+        ({
+          id,
+        } = res.body);
         return done();
       });
   });
@@ -85,7 +96,7 @@ describe('DELETE /questions/:questionId', () => {
 
   it('should reply with 200 status code', (done) => {
     request(app)
-      .delete(`/questions/${id}`)
+      .delete(`/questions/v1/${id}`)
       .set({
         Authorization: `Bearer ${session}`,
       })
@@ -93,13 +104,13 @@ describe('DELETE /questions/:questionId', () => {
   });
   it('should reply with 401 status code when authorization header is not set', (done) => {
     request(app)
-      .delete(`/questions/${id}`)
+      .delete(`/questions/v1/${id}`)
       .set({})
       .expect(401, done);
   });
   it('should reply with 200 if given invalid data', (done) => {
     request(app)
-      .delete('/questions/0')
+      .delete('/questions/v1/0')
       .set({
         Authorization: `Bearer ${session}`,
       })
