@@ -1,22 +1,30 @@
 import {
-  after, describe, before, it,
+  after,
+  describe,
+  before,
+  it,
 } from 'mocha';
 import request from 'supertest';
 
-import { app } from '../../app';
+import {
+  app,
+} from '../../app';
 
 import {
-  UserModel, QuestionModel, AnswerModel, CommentModel,
+  UserModel,
+  QuestionModel,
+  AnswerModel,
+  CommentModel,
 } from '../../app/models';
 
 
-describe('POST /questions/:questionId/answers/:answerId/comments', () => {
+describe('POST /questions/v1/:questionId/answers/:answerId/comments', () => {
   let session;
   let questionId;
   let answerId;
   before((done) => {
     request(app)
-      .post('/auth/signup')
+      .post('/auth/v1/signup')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -29,7 +37,7 @@ describe('POST /questions/:questionId/answers/:answerId/comments', () => {
   });
   before((done) => {
     request(app)
-      .post('/auth/login')
+      .post('/auth/v1/login')
       .type('form')
       .set({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -50,7 +58,7 @@ describe('POST /questions/:questionId/answers/:answerId/comments', () => {
   });
   before((done) => {
     request(app)
-      .post('/questions')
+      .post('/questions/v1')
       .type('form')
       .set({
         Authorization: `Bearer ${session}`,
@@ -72,7 +80,7 @@ describe('POST /questions/:questionId/answers/:answerId/comments', () => {
 
   before((done) => {
     request(app)
-      .post(`/questions/${questionId}/answers`)
+      .post(`/questions/v1/${questionId}/answers`)
       .type('form')
       .set({
         Authorization: `Bearer ${session}`,
@@ -133,7 +141,7 @@ describe('POST /questions/:questionId/answers/:answerId/comments', () => {
 
   it('should reply with 200 status code for comment posted', (done) => {
     request(app)
-      .post(`/questions/${questionId}/answers/${answerId}/comments`)
+      .post(`/questions/v1/${questionId}/answers/${answerId}/comments`)
       .set({
         Authorization: `Bearer ${session}`,
       })
@@ -145,7 +153,7 @@ describe('POST /questions/:questionId/answers/:answerId/comments', () => {
   });
   it('should reply with 401 status code when authorization header is not set', (done) => {
     request(app)
-      .post(`/questions/${questionId}/answers/${answerId}/comments`)
+      .post(`/questions/v1/${questionId}/answers/${answerId}/comments`)
       .set({})
       .type('form')
       .send({
